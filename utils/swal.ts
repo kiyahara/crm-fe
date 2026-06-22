@@ -19,6 +19,12 @@ export async function showSuccessModal({
       timer: 3000,
       timerProgressBar: true,
       allowOutsideClick: false,
+      background: "rgba(255, 255, 255, 0.1)",
+      color: "#fff",
+      backdrop: "rgba(0,0,0,0.6) backdrop-filter: blur(10px)",
+      customClass: {
+        popup: classes.glassSwal,
+      },
       didOpen: () => {
         const content = Swal.getHtmlContainer();
         if (content && color != "") content.style.color = color ?? "#283886";
@@ -39,6 +45,12 @@ export async function showSuccessModal({
       timer: 3000,
       timerProgressBar: true,
       allowOutsideClick: false,
+      background: "rgba(255, 255, 255, 0.1)",
+      color: "#fff",
+      backdrop: "rgba(0,0,0,0.6) backdrop-filter: blur(10px)",
+      customClass: {
+        popup: classes.glassSwal,
+      },
     });
   }
 }
@@ -73,6 +85,12 @@ export async function showErrorModal({
       timer: 3000,
       timerProgressBar: true,
       allowOutsideClick: false,
+      background: "rgba(255, 255, 255, 0.1)",
+      color: "#fff",
+      backdrop: "rgba(0,0,0,0.6) backdrop-filter: blur(10px)",
+      customClass: {
+        popup: classes.glassSwal,
+      },
     });
   }
 }

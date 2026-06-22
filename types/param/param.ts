@@ -1,4 +1,6 @@
 export interface Params {
+  email?: string;
+  password?: string;
   page?: number;
   pageSize?: number;
   num?: number;

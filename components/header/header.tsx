@@ -1,37 +1,28 @@
 "use client";
 
-import { AppShell, Flex, Image } from "@mantine/core";
-import { useViewportSize } from "@mantine/hooks";
+import { AppShell, Flex } from "@mantine/core";
 import { useRouter } from "next/navigation";
 
 export function Navbar() {
-  const { width } = useViewportSize();
-  const isMobile = width <= 768;
   const router = useRouter();
 
   return (
     <>
       <AppShell.Header withBorder={false}>
         <Flex direction="column" w="100%" align={"center"}>
-          <Flex
-            w={"100%"}
-            align={"center"}
-            justify={"space-between"}
-            pr={5}
-            pt={isMobile ? 10 : 0}
-          >
+          <Flex w={"100%"} align={"center"} justify={"center"} pr={5} pt={0}>
             <Flex
               w="20%"
-              justify="flex-start"
-              align="flex-start"
+              justify="center"
+              align="center"
               style={{ textAlign: "left" }}
               onClick={() => router.push("/home")}
             >
-              <Image
+              {/* <Image
                 radius="md"
                 src="/CRMLogo.png"
-                h={100}
-                w={100}
+                h={isMobile ? 80 : 100}
+                w={isMobile ? 80 : 100}
                 fallbackSrc="https://placehold.co/600x400?text=Placeholder"
                 alt="logo"
                 fit="contain"
@@ -40,7 +31,7 @@ export function Navbar() {
                   display: "block",
                 }}
                 pl={5}
-              />
+              /> */}
             </Flex>
           </Flex>
         </Flex>

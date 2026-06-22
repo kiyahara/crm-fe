@@ -1,7 +1,13 @@
-import { DataGroupGAInterface, InputFilterProductsInterface } from "@/types";
+import {
+  DataGroupGAInterface,
+  InputFilterProductsInterface,
+  UserInterface,
+} from "@/types";
 import { StateCreator } from "zustand";
 
 type GeneralStore = {
+  currentUser: UserInterface;
+  setCurrentUser: (_value: UserInterface) => void;
   dataGroup: DataGroupGAInterface[];
   setDataGroup: (_value: DataGroupGAInterface[]) => void;
   search: string;
@@ -22,6 +28,13 @@ let debounceTimer: ReturnType<typeof setTimeout>;
 
 const generalStore: StateCreator<TypeGeneralSession> = (set) => ({
   generalStoreData: {
+    currentUser: {
+      id: "",
+      name: "",
+      email: "",
+      type: "",
+      refreshToken: null,
+    },
     dataGroup: [],
     search: "",
     searchInput: "",
@@ -35,6 +48,14 @@ const generalStore: StateCreator<TypeGeneralSession> = (set) => ({
         legality_format: "",
         legality_state: "",
       },
+    },
+    setCurrentUser: (_value: UserInterface) => {
+      set((state) => ({
+        generalStoreData: {
+          ...state.generalStoreData,
+          currentUser: _value,
+        },
+      }));
     },
     setDataGroup: (_value: DataGroupGAInterface[]) => {
       set((state) => ({

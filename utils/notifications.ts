@@ -1,6 +1,7 @@
 import { notifications } from "@mantine/notifications";
 // import { signOut } from 'next-auth/react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function errorNotification(e: any) {
   switch (e?.response?.status) {
     case 400: {

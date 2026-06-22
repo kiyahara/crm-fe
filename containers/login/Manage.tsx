@@ -1,5 +1,9 @@
 "use client";
 
+import { LoginService } from "@/api/services";
+import useBoundStore from "@/store";
+import { ResponseLoginInterface } from "@/types/login/login";
+import { errorNotification } from "@/utils";
 import {
   Button,
   Flex,
@@ -12,10 +16,43 @@ import {
   Title,
 } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function ManageLogin() {
+  const { setLoading } = useBoundStore().generalStoreData;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { width } = useViewportSize();
+  const router = useRouter();
   const isMobile = width <= 768;
+
+  async function Login() {
+    try {
+      setLoading(true);
+      const response = await LoginService.Login(email, password);
+
+      if (response) {
+        const dataResponse: ResponseLoginInterface =
+          response as ResponseLoginInterface;
+        console.log(dataResponse);
+        localStorage.setItem("token", dataResponse.data.data.accessToken);
+        localStorage.setItem(
+          "refreshToken",
+          dataResponse.data.data.refreshToken
+        );
+        localStorage.setItem("userId", dataResponse.data.data.user.id);
+        setLoading(false);
+        router.replace("/home");
+      } else {
+        console.log(response);
+      }
+    } catch (error) {
+      setLoading(false);
+      errorNotification(error);
+    }
+  }
+
   return (
     <Flex
       justify="center"
@@ -109,6 +146,8 @@ export default function ManageLogin() {
                 size="md"
                 mb="md"
                 c="white"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
 
               <PasswordInput
@@ -117,9 +156,11 @@ export default function ManageLogin() {
                 size="md"
                 mb="xl"
                 c="white"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
 
-              <Button size="md" radius="md" fullWidth>
+              <Button size="md" radius="md" fullWidth onClick={() => Login()}>
                 Sign In
               </Button>
             </Flex>

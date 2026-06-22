@@ -2,20 +2,16 @@
 import "./globals.css";
 import "@mantine/core/styles.css";
 import "@mantine/code-highlight/styles.css";
-// import "react-datepicker/dist/react-datepicker.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/nprogress/styles.css";
 import "@mantine/tiptap/styles.css";
 import "core-js/stable";
-// import "regenerator-runtime/runtime";
 import React from "react";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-// import { theme } from '../../theme';
-// import { GlobalContextProviders } from '@/contexts';
-// import useBoundStore from '@/store';
+import AuthProvider from "@/utils/authProvider";
 
 export default function RootLayout({
   children,
@@ -48,7 +44,6 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
-        <link rel="manifest" href="/manifest.json" />
         <link
           rel="icon"
           type="image/png"
@@ -61,7 +56,7 @@ export default function RootLayout({
         <MantineProvider>
           <ModalsProvider>
             <Notifications />
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </ModalsProvider>
         </MantineProvider>
       </body>

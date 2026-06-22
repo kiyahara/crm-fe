@@ -1,6 +1,8 @@
 import { Params } from "@/types";
 
 export function generateSearchParams({
+  email,
+  password,
   name,
   page,
   pageSize,
@@ -15,6 +17,8 @@ export function generateSearchParams({
 }: Params): string {
   const result: string[] = [];
   if (
+    !email &&
+    !password &&
     !name &&
     !page &&
     !pageSize &&
@@ -33,11 +37,17 @@ export function generateSearchParams({
   if (name) {
     result.push(`name=${name}`);
   }
+  if (name) {
+    result.push(`email=${email}`);
+  }
+  if (name) {
+    result.push(`password=${password}`);
+  }
   if (page) {
     result.push(`page=${page}`);
   }
   if (pageSize) {
-    result.push(`page_size=${pageSize}`);
+    result.push(`limit=${pageSize}`);
   }
   if (num) {
     result.push(`num=${num}`);

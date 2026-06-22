@@ -2,7 +2,6 @@
 import classes from "./layout.module.css";
 import { Footer, Navbar } from "@/components";
 import { AppShell, Container } from "@mantine/core";
-import { useViewportSize } from "@mantine/hooks";
 import useBoundStore from "@/store";
 import ShowLoadingModal from "@/utils/swal";
 import { usePathname } from "next/navigation";
@@ -14,15 +13,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { width } = useViewportSize();
-  const isMobile = width <= 768;
   const { loading } = useBoundStore().generalStoreData;
   const pathname = usePathname();
+
   return (
-    // <GuardToken>
-    // <ErrorBoundary>
     <AppShell
-      header={{ height: pathname !== "/login" ? (isMobile ? 50 : 100) : "" }}
       classNames={{
         header: pathname !== "/login" ? classes.header : "",
         main: pathname !== "/login" ? classes.main : "",
@@ -57,7 +52,5 @@ export default function RootLayout({
         <Footer />
       </AppShell.Main>
     </AppShell>
-    //   </ErrorBoundary>
-    // </GuardToken>
   );
 }
