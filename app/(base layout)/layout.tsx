@@ -28,7 +28,7 @@ export default function RootLayout({
         main: pathname !== "/login" ? classes.main : "",
       }}
     >
-      {pathname !== "/login" ?? <Navbar />}
+      {pathname !== "/login" ? <Navbar /> : ""}
 
       <AppShell.Main
         style={{
