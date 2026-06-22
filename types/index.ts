@@ -7,3 +7,4 @@ export * from "./param";
 export * from "./table";
 export * from "./admin";
 export * from "./login";
+export * from "./lead";

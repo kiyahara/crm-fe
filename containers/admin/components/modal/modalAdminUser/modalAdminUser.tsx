@@ -5,7 +5,7 @@ import classes from "./modalAdminUser.module.css";
 import { ModalUniversal } from "@/components/modalUniversal";
 import { useEffect, useState } from "react";
 import { InputUserInterface, UserInterface } from "@/types";
-import { UserService } from "@/api/services/user";
+import { UserService } from "@/api/services";
 import { errorNotification, showSuccessModal } from "@/utils";
 import useBoundStore from "@/store";
 

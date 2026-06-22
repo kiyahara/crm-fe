@@ -2,6 +2,7 @@
 
 import { UserService } from "@/api/services/user";
 import useBoundStore from "@/store";
+import { ResponseUserDetailInterface, UserInterface } from "@/types";
 import { errorNotification } from "@/utils";
 import { Flex, Image, Paper, Text, Title } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
@@ -9,6 +10,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ManageMainHome() {
+  const [user, setUser] = useState<UserInterface>({
+    id: "",
+    name: "",
+    email: "",
+    type: "",
+    refreshToken: null,
+  });
   const { setLoading } = useBoundStore().generalStoreData;
   const { width } = useViewportSize();
   const isMobile = width <= 768;
@@ -34,9 +42,18 @@ export default function ManageMainHome() {
       const response = await UserService.getUserDetail(id ?? "");
 
       if (response) {
-        console.log(response);
         setLoading(false);
-      } else {
+        const dataResponse = response as ResponseUserDetailInterface;
+
+        setUser(
+          dataResponse.data ?? {
+            id: "",
+            name: "",
+            email: "",
+            type: "",
+            refreshToken: null,
+          }
+        );
         console.log(response);
       }
     } catch (error) {
@@ -44,8 +61,13 @@ export default function ManageMainHome() {
       errorNotification(error);
     }
   }
+  const handleLogout = () => {
+    localStorage.clear(); // atau remove token saja
+    router.push("/login");
+  };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     getUserDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,44 +98,70 @@ export default function ManageMainHome() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
           }}
         >
+          <Flex justify="space-between" align="center" w="100%" px={20} pt={20}>
+            <Text c="white" size="sm">
+              👋 Welcome, {user?.name ?? "-"}
+            </Text>
+
+            <Text
+              c="red"
+              size="sm"
+              px={12}
+              py={6}
+              style={{
+                cursor: "pointer",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: 8,
+                backdropFilter: "blur(10px)",
+                background: "rgba(255,255,255,0.05)",
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Text>
+          </Flex>
           <Flex
             flex={1}
             h={isMobile ? "100dvh" : "95dvh"}
             align="center"
             justify="space-around"
             direction={!isMobile ? "row" : "column"}
-            p={40}
+            p={30}
             gap={40}
           >
-            <Flex
-              flex={1}
-              h="100%"
-              w="100%"
-              justify="center"
-              align="center"
-              direction="column"
-              p="xl"
-              c={"white"}
-              style={getCardStyle(hovered === "left")}
-              onMouseEnter={() => setHovered("left")}
-              onMouseLeave={() => setHovered(null)}
-              onClick={() => router.push("/admin")}
-            >
-              <Image
-                src="/CRMAdmin.png"
-                w={"50%"}
-                fit="contain"
-                alt="CRM Logo"
-              />
+            {user.type.includes("admin") ? (
+              <Flex
+                flex={1}
+                h="100%"
+                w="100%"
+                justify="center"
+                align="center"
+                direction="column"
+                p="xl"
+                c={"white"}
+                style={getCardStyle(hovered === "left")}
+                onMouseEnter={() => setHovered("left")}
+                onMouseLeave={() => setHovered(null)}
+                onClick={() => router.push("/admin")}
+              >
+                <Image
+                  src="/CRMAdmin.png"
+                  w={"50%"}
+                  fit="contain"
+                  alt="CRM Logo"
+                />
 
-              <Title order={2} mt="lg" ta="center">
-                CRM Admin
-              </Title>
+                <Title order={2} mt="lg" ta="center">
+                  CRM Admin
+                </Title>
 
-              <Text ta="center" mt="sm" maw={280}>
-                Manage User Data
-              </Text>
-            </Flex>
+                <Text ta="center" mt="sm" maw={280}>
+                  Manage User Data
+                </Text>
+              </Flex>
+            ) : (
+              ""
+            )}
 
             <Flex
               flex={1}
@@ -127,8 +175,14 @@ export default function ManageMainHome() {
               style={getCardStyle(hovered === "right")}
               onMouseEnter={() => setHovered("right")}
               onMouseLeave={() => setHovered(null)}
+              onClick={() => router.push("/lead")}
             >
-              <Image src="/CRMSPK.png" w={"50%"} fit="contain" alt="CRM Logo" />
+              <Image
+                src="/CRMSPK.png"
+                w={user.type.includes("admin") ? "50%" : "25%"}
+                fit="contain"
+                alt="CRM Logo"
+              />
 
               <Title order={2} mt="lg" ta="center">
                 CRM Lead & SPK
