@@ -6,7 +6,12 @@
     "dev": "next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3003",
-    "lint": "eslint"
+    "lint": "next lint",
+    "lint:staged": "lint-staged",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@mantine/carousel": "^9.0.1",

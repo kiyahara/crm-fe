@@ -33,7 +33,9 @@ export function Footer() {
           py={5}
           px={10}
         >
-          <Text size="xs">©2026 Fenri Mintardja - CRM(Solusi Klik)</Text>
+          <Text size="xs">
+            ©2026 Fenri Mintardja - CRM(Solusi Klik) TEST HUSKY
+          </Text>
           <Flex>
             <ActionIcon
               bg={"black"}
