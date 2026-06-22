@@ -1,0 +1,33 @@
+.textDeckBuilder {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  color: white;
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.05)
+  );
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.textDeckBuilder:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  background: #373a40;
+  border-color: #4c6ef5;
+}
+
+.textDeckBuilder:active {
+  transform: scale(0.98);
+  background: #1f2125;
+}

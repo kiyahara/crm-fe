@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
+/* ================= ROOT THEME ================= */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #222222; /* FIX: langsung dark, no putih */
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +13,98 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ================= FONTS ================= */
+@font-face {
+  font-family: Roboto;
+  src: url("./fonts/Roboto-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: StyleScript;
+  src: url("./fonts/StyleScript-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Roboto-Bold;
+  src: url("./fonts/Roboto-Bold.ttf") format("truetype");
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+  margin: 0;
+  scroll-behavior: smooth;
+  overflow: hidden;
+}
+
+html {
+  background: #222222;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background: #222222;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Roboto, sans-serif;
+  overflow-y: overlay;
+}
+
+/* ================= SCROLLBAR ================= */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  transition: background 0.3s ease;
+}
+
+/* hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+/* ================= MANTINE FIX ================= */
+
+.mantine-AppShell-main {
+  background: transparent !important;
+}
+
+.mantine-AppShell-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mantine-AppShell-main::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.mantine-AppShell-main::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0);
+}
+
+body:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
 }

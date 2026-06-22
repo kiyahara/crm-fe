@@ -1,0 +1,40 @@
+.content {
+  background: rgba(30, 30, 30, 0.55);
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+}
+
+.header {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.headerHidden {
+  display: none;
+}
+
+.body {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 10px;
+}
+
+.close {
+  background: #2c2e33;
+  color: #ffffff;
+  border: 1px solid #3f4147;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.close:hover {
+  background: #373a40;
+  border-color: #4c6ef5;
+}
+
+.close:active {
+  background: #1f2125;
+}
