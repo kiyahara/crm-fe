@@ -16,9 +16,10 @@ export interface LeadInterface {
   phoneNumber: string;
   email: string;
   leadSource: string;
-  estimatedValue: number;
+  estimatedValue: string;
   status: string;
   idSales: string;
+  isSpk: boolean;
   nameSales: string;
   notes: string;
 }
@@ -37,7 +38,6 @@ export interface PaginationLeadInterface {
 }
 
 export interface InputLeadInterface {
-  id: string;
   companyName: string;
   contactName: string;
   phoneNumber: string;

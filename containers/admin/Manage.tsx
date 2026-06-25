@@ -1,7 +1,7 @@
 "use client";
 
 import { UserService } from "@/api/services/user";
-import { TableComponent } from "@/components";
+import { SearchInput, TableComponent } from "@/components";
 import useBoundStore from "@/store";
 import { HeaderInterface, ResponseUserInterface, UserInterface } from "@/types";
 import { errorNotification } from "@/utils";
@@ -34,9 +34,11 @@ export default function ManageAdmin() {
     activePage,
     totalPage,
     totalData,
+    searchData,
     setActivePage,
     setTotalPage,
     setTotalData,
+    setSearchData,
   } = useHooksPagination();
   const [data, setData] = useState<UserInterface[]>([]);
   const [currentData, setCurrentData] = useState<UserInterface>(defaultData);
@@ -65,6 +67,14 @@ export default function ManageAdmin() {
     setActivePage(page);
   };
 
+  const handleSearch = (value: string) => {
+    setSearchData(value);
+
+    if (activePage !== 1) {
+      setActivePage(1);
+    }
+  };
+
   const getUserData = useCallback(
     async (page = 1, limit = 10) => {
       setLoading(true);
@@ -73,6 +83,7 @@ export default function ManageAdmin() {
         const response = await UserService.getListUser({
           page,
           pageSize: limit,
+          search: searchData,
         });
 
         if (response) {
@@ -89,13 +100,13 @@ export default function ManageAdmin() {
         setLoading(false);
       }
     },
-    [setLoading, setTotalPage, setTotalData]
+    [setLoading, setTotalPage, setTotalData, searchData]
   );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void getUserData(activePage, 10);
-  }, [activePage, getUserData]);
+  }, [activePage, getUserData, searchData]);
 
   return (
     <>
@@ -141,18 +152,20 @@ export default function ManageAdmin() {
               c={"white"}
               style={getCardStyle()}
             >
-              <Button
-                variant="light"
-                size="xs"
-                onClick={() => window.history.back()}
-                styles={{
-                  root: {
-                    borderRadius: "12px",
-                  },
-                }}
-              >
-                ← Back
-              </Button>
+              <Flex w="100%" justify="flex-start">
+                <Button
+                  variant="light"
+                  size="xs"
+                  onClick={() => window.history.back()}
+                  styles={{
+                    root: {
+                      borderRadius: "12px",
+                    },
+                  }}
+                >
+                  ← Back
+                </Button>
+              </Flex>
               <Flex
                 direction="column"
                 w="100%"
@@ -170,7 +183,7 @@ export default function ManageAdmin() {
                   CRM Admin
                 </Title>
               </Flex>
-              <Flex w={"100%"} justify={"end"}>
+              <Flex w={"100%"} justify={"end"} pb={10}>
                 <Button
                   radius={20}
                   size="xs"
@@ -196,6 +209,7 @@ export default function ManageAdmin() {
                   </Flex>
                 </Button>
               </Flex>
+              <SearchInput setSearchData={handleSearch} />
               <Flex
                 direction="column"
                 w="100%"
@@ -255,6 +269,21 @@ export default function ManageAdmin() {
                       </Table.Td>
                     </Table.Tr>
                   ))}
+                  {data.length == 0 ? (
+                    <Table.Tr
+                      style={{
+                        background: "rgba(255,255,255,0.02)",
+                        borderBottom: "1px solid rgba(255,255,255,0.08)",
+                        backdropFilter: "blur(6px)",
+                      }}
+                    >
+                      <Table.Td colSpan={5} ta={"center"}>
+                        <Text size="md">Tidak ada data User</Text>
+                      </Table.Td>
+                    </Table.Tr>
+                  ) : (
+                    ""
+                  )}
                 </TableComponent>
                 <Flex
                   justify={"space-between"}

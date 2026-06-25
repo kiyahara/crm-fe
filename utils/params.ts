@@ -6,6 +6,7 @@ export function generateSearchParams({
   name,
   page,
   pageSize,
+  search,
   num,
   offset,
   elements,
@@ -23,6 +24,7 @@ export function generateSearchParams({
     !page &&
     !pageSize &&
     !num &&
+    !search &&
     !offset &&
     !elements &&
     !sets &&
@@ -37,11 +39,14 @@ export function generateSearchParams({
   if (name) {
     result.push(`name=${name}`);
   }
-  if (name) {
+  if (email) {
     result.push(`email=${email}`);
   }
-  if (name) {
+  if (password) {
     result.push(`password=${password}`);
+  }
+  if (search) {
+    result.push(`search=${search}`);
   }
   if (page) {
     result.push(`page=${page}`);

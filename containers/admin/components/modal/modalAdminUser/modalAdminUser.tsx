@@ -9,7 +9,7 @@ import { UserService } from "@/api/services";
 import { errorNotification, showSuccessModal } from "@/utils";
 import useBoundStore from "@/store";
 
-interface PropsModalDetailCardGATypes {
+interface PropsModalAdminUserTypes {
   title: string;
   openModal: boolean;
   getUser: () => void;
@@ -23,7 +23,7 @@ export function ModalAdminUser({
   existingData,
   getUser,
   setOpenModal,
-}: PropsModalDetailCardGATypes) {
+}: PropsModalAdminUserTypes) {
   const { setLoading } = useBoundStore().generalStoreData;
   const [dataUser, setDataUser] = useState<InputUserInterface>({
     name: "",

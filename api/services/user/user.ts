@@ -20,6 +20,12 @@ async function getListUser(Param: Params) {
   return response.result;
 }
 
+async function getListUserType(type: string) {
+  const url = `/users/userType?type=${type}`;
+  const response = await apiCRM.get(url);
+  return response.result;
+}
+
 async function getUserDetail(id: string) {
   const url = "/users/" + id;
   const response = await apiCRM.get(url);
@@ -28,6 +34,7 @@ async function getUserDetail(id: string) {
 
 export const UserService = {
   getListUser,
+  getListUserType,
   getUserDetail,
   PostNewUser,
   PutExistingUser,

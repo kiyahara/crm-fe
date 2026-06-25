@@ -26,47 +26,49 @@ export default function AuthProvider({
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (pathname === "/login") {
-        setLoading(false);
-        return;
-      }
-
-      const token = localStorage.getItem("token");
-      const refresh = localStorage.getItem("refreshToken");
-
-      if (!refresh) {
-        router.replace("/login");
-        return;
-      }
-
       try {
-        let validToken = token;
+        const token = localStorage.getItem("token");
+        const refresh = localStorage.getItem("refreshToken");
+        if (pathname === "/login") {
+          if (token && !isTokenExpired(token)) {
+            router.replace("/home");
+            return;
+          }
 
-        // 🔥 refresh ONLY if needed
+          setLoading(false);
+          return;
+        }
+
+        if (!refresh) {
+          router.replace("/login");
+          return;
+        }
+
         if (!token || isTokenExpired(token)) {
           const newToken = await refreshToken();
 
           if (!newToken) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("userId");
+
             router.replace("/login");
             return;
           }
 
           localStorage.setItem("token", newToken);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          validToken = newToken;
         }
 
-        // 🔥 SAVE CURRENT ROUTE ONLY (NO AUTO REDIRECT)
-        if (pathname && pathname !== "/login") {
-          localStorage.setItem("lastRoute", pathname);
-        }
+        localStorage.setItem("lastRoute", pathname);
 
         setLoading(false);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (err) {
+      } catch (error) {
+        console.error("AUTH ERROR:", error);
+
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("userId");
+
         router.replace("/login");
       }
     };
@@ -74,7 +76,9 @@ export default function AuthProvider({
     checkAuth();
   }, [pathname, router]);
 
-  if (loading && pathname !== "/login") return null;
+  if (loading) {
+    return null;
+  }
 
   return <>{children}</>;
 }

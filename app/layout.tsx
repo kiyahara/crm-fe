@@ -1,6 +1,7 @@
 // "use client";
 import "./globals.css";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import "@mantine/code-highlight/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/notifications/styles.css";
@@ -11,18 +12,12 @@ import React from "react";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-import AuthProvider from "@/utils/authProvider";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const { headTitleData, setHeadTitleData } = useBoundStore().HeadTitleData;
-  // useEffect(() => {
-  //   setHeadTitleData('AAA Power - Login');
-  // }, [setHeadTitleData]);
-
   return (
     // <GlobalContextProviders>
     <html lang="en" translate="no">
@@ -56,7 +51,7 @@ export default function RootLayout({
         <MantineProvider>
           <ModalsProvider>
             <Notifications />
-            <AuthProvider>{children}</AuthProvider>
+            {children}
           </ModalsProvider>
         </MantineProvider>
       </body>

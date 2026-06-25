@@ -1,23 +1,13 @@
 "use client";
 
-import { UserService } from "@/api/services/user";
 import useBoundStore from "@/store";
-import { ResponseUserDetailInterface, UserInterface } from "@/types";
-import { errorNotification } from "@/utils";
 import { Flex, Image, Paper, Text, Title } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ManageMainHome() {
-  const [user, setUser] = useState<UserInterface>({
-    id: "",
-    name: "",
-    email: "",
-    type: "",
-    refreshToken: null,
-  });
-  const { setLoading } = useBoundStore().generalStoreData;
+  const { currentUser } = useBoundStore().generalStoreData;
   const { width } = useViewportSize();
   const isMobile = width <= 768;
   const router = useRouter();
@@ -35,42 +25,10 @@ export default function ManageMainHome() {
     cursor: "pointer",
   });
 
-  async function getUserDetail() {
-    try {
-      setLoading(true);
-      const id = localStorage.getItem("userId");
-      const response = await UserService.getUserDetail(id ?? "");
-
-      if (response) {
-        setLoading(false);
-        const dataResponse = response as ResponseUserDetailInterface;
-
-        setUser(
-          dataResponse.data ?? {
-            id: "",
-            name: "",
-            email: "",
-            type: "",
-            refreshToken: null,
-          }
-        );
-        console.log(response);
-      }
-    } catch (error) {
-      setLoading(false);
-      errorNotification(error);
-    }
-  }
   const handleLogout = () => {
     localStorage.clear(); // atau remove token saja
     router.push("/login");
   };
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    getUserDetail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
@@ -100,7 +58,7 @@ export default function ManageMainHome() {
         >
           <Flex justify="space-between" align="center" w="100%" px={20} pt={20}>
             <Text c="white" size="sm">
-              👋 Welcome, {user?.name ?? "-"}
+              👋 Welcome, {currentUser?.name ?? "-"}
             </Text>
 
             <Text
@@ -122,14 +80,14 @@ export default function ManageMainHome() {
           </Flex>
           <Flex
             flex={1}
-            h={isMobile ? "100dvh" : "95dvh"}
+            h={isMobile ? "100dvh" : "90dvh"}
             align="center"
             justify="space-around"
             direction={!isMobile ? "row" : "column"}
             p={30}
             gap={40}
           >
-            {user.type.includes("admin") ? (
+            {currentUser.type.includes("admin") ? (
               <Flex
                 flex={1}
                 h="100%"
@@ -179,7 +137,7 @@ export default function ManageMainHome() {
             >
               <Image
                 src="/CRMSPK.png"
-                w={user.type.includes("admin") ? "50%" : "25%"}
+                w={currentUser.type.includes("admin") ? "50%" : "25%"}
                 fit="contain"
                 alt="CRM Logo"
               />

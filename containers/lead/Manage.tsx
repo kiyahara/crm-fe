@@ -1,9 +1,9 @@
 "use client";
 
-import { TableComponent } from "@/components";
+import { SearchInput, TableComponent } from "@/components";
 import useBoundStore from "@/store";
 import { HeaderInterface, LeadInterface, ResponseLeadInterface } from "@/types";
-import { errorNotification } from "@/utils";
+import { errorNotification, formatRupiah } from "@/utils";
 import { useHooksPagination } from "@/utils/pagination";
 import {
   ActionIcon,
@@ -21,34 +21,39 @@ import { IconEdit, IconPlus } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 // import { ModalLeadUser } from "./components";
 import { LeadService } from "@/api/services";
+import { ModalLeadSales, ModalLeadToSpk } from "./modal";
 
 export default function ManageLead() {
-  // const defaultData: LeadInterface = {
-  //   id: "",
-  //   companyName: "",
-  //   contactName: "",
-  //   phoneNumber: "",
-  //   email: "",
-  //   leadSource: "",
-  //   estimatedValue: 0,
-  //   status: "",
-  //   idSales: "",
-  //   nameSales: "",
-  //   notes: "",
-  // };
+  const defaultData: LeadInterface = {
+    id: "",
+    companyName: "",
+    contactName: "",
+    phoneNumber: "",
+    email: "",
+    leadSource: "",
+    estimatedValue: "",
+    isSpk: false,
+    status: "",
+    idSales: "",
+    nameSales: "",
+    notes: "",
+  };
   const {
     activePage,
     totalPage,
     totalData,
+    searchData,
     setActivePage,
     setTotalPage,
     setTotalData,
+    setSearchData,
   } = useHooksPagination();
   const [data, setData] = useState<LeadInterface[]>([]);
-  // const [currentData, setCurrentData] = useState<LeadInterface>(defaultData);
+  const [currentData, setCurrentData] = useState<LeadInterface>(defaultData);
   const { setLoading } = useBoundStore().generalStoreData;
-  // const [title, setTitle] = useState<string>("");
-  // const [openModal, setOpenModal] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModalCreateSpk, setOpenModalCreateSpk] = useState<boolean>(false);
   const { width } = useViewportSize();
   const isMobile = width <= 768;
   const getCardStyle = () => ({
@@ -60,11 +65,12 @@ export default function ManageLead() {
       "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
   });
   const header: HeaderInterface[] = [
-    { title: "No", align: "center", sizeWidth: "5%" },
+    { title: "No", align: "center", sizeWidth: "3%" },
     { title: "Companyname", align: "center" },
     { title: "ContactName", align: "center" },
     { title: "SalesName", align: "center" },
     { title: "PhoneNumber", align: "center" },
+    { title: "EstimatedValue", align: "center" },
     { title: "Email", align: "center" },
     { title: "Status", align: "center" },
     { title: "Action", align: "center" },
@@ -72,6 +78,14 @@ export default function ManageLead() {
 
   const handlePageChange = (page: number) => {
     setActivePage(page);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchData(value);
+
+    if (activePage !== 1) {
+      setActivePage(1);
+    }
   };
 
   const getListLead = useCallback(
@@ -82,6 +96,7 @@ export default function ManageLead() {
         const response = await LeadService.getListLead({
           page,
           pageSize: limit,
+          search: searchData,
         });
 
         if (response) {
@@ -98,13 +113,13 @@ export default function ManageLead() {
         setLoading(false);
       }
     },
-    [setLoading, setTotalPage, setTotalData]
+    [setLoading, setTotalPage, setTotalData, searchData]
   );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void getListLead(activePage, 10);
-  }, [activePage, getListLead]);
+  }, [activePage, getListLead, searchData]);
 
   return (
     <>
@@ -150,18 +165,20 @@ export default function ManageLead() {
               c={"white"}
               style={getCardStyle()}
             >
-              <Button
-                variant="light"
-                size="xs"
-                onClick={() => window.history.back()}
-                styles={{
-                  root: {
-                    borderRadius: "12px",
-                  },
-                }}
-              >
-                ← Back
-              </Button>
+              <Flex w="100%" justify="flex-start">
+                <Button
+                  variant="light"
+                  size="xs"
+                  onClick={() => window.history.back()}
+                  styles={{
+                    root: {
+                      borderRadius: "12px",
+                    },
+                  }}
+                >
+                  ← Back
+                </Button>
+              </Flex>
               <Flex
                 direction="column"
                 w="100%"
@@ -174,7 +191,7 @@ export default function ManageLead() {
                   CRM Lead & SPK
                 </Title>
               </Flex>
-              <Flex w={"100%"} justify={"end"}>
+              <Flex w={"100%"} justify={"end"} pb={10}>
                 <Button
                   radius={20}
                   size="xs"
@@ -188,11 +205,11 @@ export default function ManageLead() {
                       marginRight: 4,
                     },
                   }}
-                  // onClick={() => {
-                  //   setTitle("Tambah Lead");
-                  //   setCurrentData(defaultData);
-                  //   setOpenModal(true);
-                  // }}
+                  onClick={() => {
+                    setTitle("Tambah Lead");
+                    setCurrentData(defaultData);
+                    setOpenModal(true);
+                  }}
                 >
                   <Flex justify={"center"} align={"center"} p={10}>
                     <IconPlus size={18} stroke={2} />
@@ -200,6 +217,7 @@ export default function ManageLead() {
                   </Flex>
                 </Button>
               </Flex>
+              <SearchInput setSearchData={handleSearch} />
               <Flex
                 direction="column"
                 w="100%"
@@ -211,66 +229,139 @@ export default function ManageLead() {
                   header={header}
                   headerColor="linear-gradient(135deg, #3b82f6, #1d4ed8)"
                 >
-                  {data.map((user, index) => (
+                  {data.map((lead, index) => (
                     <Table.Tr
-                      key={user.id}
+                      key={lead.id}
                       style={{
                         background: "rgba(255,255,255,0.02)",
                         borderBottom: "1px solid rgba(255,255,255,0.08)",
                         backdropFilter: "blur(6px)",
                       }}
                     >
-                      <Table.Td>
+                      <Table.Td ta={"center"}>
                         <Text size="md">{index + 1}</Text>
                       </Table.Td>
 
                       <Table.Td>
-                        <Text size="md">{user.companyName}</Text>
+                        <Text size="md">{lead.companyName}</Text>
                       </Table.Td>
 
                       <Table.Td>
-                        <Text size="md">{user.contactName}</Text>
+                        <Text size="md">{lead.contactName}</Text>
                       </Table.Td>
 
                       <Table.Td ta={"center"}>
-                        <Text size="md">{user.nameSales}</Text>
+                        <Text size="md">{lead.nameSales}</Text>
+                      </Table.Td>
+
+                      <Table.Td ta={"start"}>
+                        <Text size="md">{lead.phoneNumber}</Text>
+                      </Table.Td>
+
+                      <Table.Td ta={"end"}>
+                        <Text size="md">
+                          {formatRupiah(Number(lead.estimatedValue))}
+                        </Text>
                       </Table.Td>
 
                       <Table.Td ta={"center"}>
-                        <Text size="md">{user.phoneNumber}</Text>
+                        <Text size="md">{lead.email}</Text>
                       </Table.Td>
 
                       <Table.Td ta={"center"}>
-                        <Text size="md">{user.email}</Text>
-                      </Table.Td>
-
-                      <Table.Td ta={"center"}>
-                        <Text size="md">{user.status}</Text>
+                        <Text size="md">{lead.status}</Text>
                       </Table.Td>
 
                       <Table.Td ta="center">
-                        <ActionIcon
-                          size="md"
-                          radius="md"
-                          style={{
-                            background: "rgba(59,130,246,0.25)",
-                            backdropFilter: "blur(10px)",
-                            WebkitBackdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255,255,255,0.2)",
-                            color: "#93c5fd",
-                            boxShadow: "0 4px 16px rgba(59,130,246,0.25)",
-                          }}
-                          // onClick={() => {
-                          //   setTitle("Edit User");
-                          //   setCurrentData(user);
-                          //   setOpenModal(true);
-                          // }}
-                        >
-                          <IconEdit size={16} />
-                        </ActionIcon>
+                        <Flex gap={5}>
+                          <ActionIcon
+                            size="md"
+                            radius="md"
+                            style={{
+                              background: lead.isSpk
+                                ? "rgba(107,114,128,0.2)"
+                                : "rgba(59,130,246,0.25)",
+                              backdropFilter: "blur(10px)",
+                              WebkitBackdropFilter: "blur(10px)",
+                              border: lead.isSpk
+                                ? "1px solid rgba(107,114,128,0.2)"
+                                : "1px solid rgba(255,255,255,0.2)",
+                              color: lead.isSpk ? "#9ca3af" : "#93c5fd",
+                              boxShadow: lead.isSpk
+                                ? "none"
+                                : "0 4px 16px rgba(59,130,246,0.25)",
+                              cursor: lead.isSpk ? "not-allowed" : "pointer",
+                              opacity: lead.isSpk ? 0.6 : 1,
+                            }}
+                            onClick={() => {
+                              setTitle("Edit User");
+                              setCurrentData(lead);
+                              setOpenModal(true);
+                            }}
+                            disabled={lead.isSpk}
+                          >
+                            <IconEdit size={16} />
+                          </ActionIcon>
+                          <ActionIcon
+                            size="md"
+                            radius="md"
+                            style={{
+                              background:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? "rgba(107,114,128,0.2)"
+                                  : "rgba(59,130,246,0.25)",
+                              backdropFilter: "blur(10px)",
+                              WebkitBackdropFilter: "blur(10px)",
+                              border:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? "1px solid rgba(107,114,128,0.2)"
+                                  : "1px solid rgba(255,255,255,0.2)",
+                              color:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? "#9ca3af"
+                                  : "#93c5fd",
+                              boxShadow:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? "none"
+                                  : "0 4px 16px rgba(59,130,246,0.25)",
+                              cursor:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? "not-allowed"
+                                  : "pointer",
+                              opacity:
+                                !lead.status.includes("Won") || lead.isSpk
+                                  ? 0.6
+                                  : 1,
+                            }}
+                            onClick={() => {
+                              setCurrentData(lead);
+                              setOpenModalCreateSpk(true);
+                            }}
+                            disabled={
+                              !lead.status.includes("Won") || lead.isSpk
+                            }
+                          >
+                            <IconPlus size={16} />
+                          </ActionIcon>
+                        </Flex>
                       </Table.Td>
                     </Table.Tr>
                   ))}
+                  {data.length == 0 ? (
+                    <Table.Tr
+                      style={{
+                        background: "rgba(255,255,255,0.02)",
+                        borderBottom: "1px solid rgba(255,255,255,0.08)",
+                        backdropFilter: "blur(6px)",
+                      }}
+                    >
+                      <Table.Td colSpan={8} ta={"center"}>
+                        <Text size="md">Tidak ada data Lead</Text>
+                      </Table.Td>
+                    </Table.Tr>
+                  ) : (
+                    ""
+                  )}
                 </TableComponent>
                 <Flex
                   justify={"space-between"}
@@ -303,13 +394,21 @@ export default function ManageLead() {
           </Flex>
         </Paper>
       </Flex>
-      {/* <ModalLeadUser
+      <ModalLeadSales
         title={title}
-        getUser={() => getListLead(activePage, 10)}
+        getLead={() => getListLead(activePage, 10)}
         existingData={currentData}
         setOpenModal={setOpenModal}
         openModal={openModal}
-      /> */}
+      />
+
+      <ModalLeadToSpk
+        title={"Tambah SPK"}
+        getLead={() => getListLead(activePage, 10)}
+        existingData={currentData}
+        setOpenModal={setOpenModalCreateSpk}
+        openModal={openModalCreateSpk}
+      />
     </>
   );
 }

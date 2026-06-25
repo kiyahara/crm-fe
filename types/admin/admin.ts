@@ -9,6 +9,12 @@ export interface ResponseUserInterface {
   };
 }
 
+export interface ResponseUserSalesInterface {
+  message: string;
+  statusCode: number;
+  data: UserInterface[];
+}
+
 export interface ResponseUserDetailInterface {
   message: string;
   statusCode: number;

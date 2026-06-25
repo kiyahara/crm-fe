@@ -7,6 +7,7 @@ export interface Params {
   offset?: number;
   name?: string;
   effect?: string;
+  search?: string;
   legality_format?: string;
   legality_state?: string;
   elements?: string[];

@@ -52,3 +52,12 @@ export const formatWithOr = (arr: string[]) => {
 
   return `${arr.slice(0, -1).join(", ")} or ${arr[arr.length - 1]}`;
 };
+
+export const formatRupiah = (number: number) => {
+  const formatter = new Intl.NumberFormat("id-ID", {
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  return formatter.format(number) || "-";
+};

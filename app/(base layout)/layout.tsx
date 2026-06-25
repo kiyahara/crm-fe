@@ -5,6 +5,11 @@ import { AppShell, Container } from "@mantine/core";
 import useBoundStore from "@/store";
 import ShowLoadingModal from "@/utils/swal";
 import { usePathname } from "next/navigation";
+import { useCallback, useEffect } from "react";
+import { UserService } from "@/api/services";
+import { ResponseUserDetailInterface } from "@/types";
+import { errorNotification } from "@/utils";
+import AuthProvider from "@/utils/authProvider";
 // import { GuardToken } from '@/contexts';
 // import useBoundStore from '@/store';
 
@@ -13,8 +18,44 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { loading } = useBoundStore().generalStoreData;
+  const { loading, currentUser, setLoading, setCurrentUser } =
+    useBoundStore().generalStoreData;
   const pathname = usePathname();
+
+  const getUserDetail = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const id = localStorage.getItem("userId");
+      const response = await UserService.getUserDetail(id ?? "");
+
+      if (response) {
+        setLoading(false);
+        const dataResponse = response as ResponseUserDetailInterface;
+
+        setCurrentUser(
+          dataResponse.data ?? {
+            id: "",
+            name: "",
+            email: "",
+            type: "",
+            refreshToken: null,
+          }
+        );
+      }
+    } catch (error) {
+      errorNotification(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setCurrentUser]);
+
+  useEffect(() => {
+    if (pathname === "/login") return;
+    if (!currentUser.id) {
+      getUserDetail();
+    }
+  }, [pathname, currentUser.id, getUserDetail]);
 
   return (
     <AppShell
@@ -47,7 +88,7 @@ export default function RootLayout({
             // backgroundColor: "#FCFDFF",
           }}
         >
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </Container>
         <Footer />
       </AppShell.Main>
